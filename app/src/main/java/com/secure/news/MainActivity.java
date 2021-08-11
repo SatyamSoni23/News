@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Adapter;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,6 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NewsItemClicked {
 
@@ -30,10 +33,11 @@ public class MainActivity extends AppCompatActivity implements NewsItemClicked {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //------------------
         //LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
         recyclerView = findViewById(R.id.recylerView);
-
         fetch_data();
+
         mAdapter = new NewsListAdapter(this);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -44,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements NewsItemClicked {
         String url = "https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=f25bd7cf2bf341fa8db0f6f426364335";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -58,23 +61,26 @@ public class MainActivity extends AppCompatActivity implements NewsItemClicked {
                                         newsJsonObject.getString("url"),
                                         newsJsonObject.getString("urlToImage")
                                 );
-                                //Log.e("getmsg", newsJsonObject.toString());
                                 newsArrayList.add(news);
                             }
                             mAdapter.updatedNews(newsArrayList);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-
                     }
-                });
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("User-Agent", "Mozilla/5.0");
+                return headers;
+            }
+        };
         MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
