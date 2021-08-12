@@ -1,17 +1,20 @@
-package com.secure.news;
+package com.secure.news.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.secure.news.News;
+import com.secure.news.NewsItemClicked;
+import com.secure.news.R;
+
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class NewsListAdapter extends RecyclerView.Adapter<NewsViewHolder>{
     ArrayList<News> items = new ArrayList<News>();
@@ -41,11 +44,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        String currentItem = items.get(position).title;
-        holder.textView.setText(currentItem);
+        News currentItem = items.get(position);
+        holder.textView.setText(currentItem.title);
+        if(currentItem.author.equals("null")){
+            holder.author.setText("Unknown Source");
+        }
+        else{
+            holder.author.setText(currentItem.author);
+        }
+        Glide.with(holder.itemView.getContext()).load(currentItem.imageUrl).into(holder.image);
     }
 
-    void updatedNews(ArrayList<News> updateNews){
+    public void updatedNews(ArrayList<News> updateNews){
         items.clear();
         items.addAll(updateNews);
 
@@ -54,13 +64,13 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsViewHolder>{
 }
 
 class NewsViewHolder extends RecyclerView.ViewHolder {
-    TextView textView;
+    TextView textView, author;
+    ImageView image;
     public NewsViewHolder(@NonNull View view) {
         super(view);
         textView = view.findViewById(R.id.title);
+        author = view.findViewById(R.id.author);
+        image = view.findViewById(R.id.image);
     }
 }
 
-interface NewsItemClicked {
-    void onItemClicked(News item);
-}

@@ -1,11 +1,15 @@
 package com.secure.news;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabColorSchemeParams;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import android.graphics.Color;
 import android.net.Uri;
@@ -20,6 +24,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,10 +35,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements NewsItemClicked {
+import com.secure.news.adapter.pager_adapter;
 
-    RecyclerView recyclerView;
-    NewsListAdapter mAdapter;
+public class MainActivity extends AppCompatActivity {
+
+    TabLayout tabLayout;
+    TabItem mHome, mScience, mTechnology, mSport, mEntertainment, mHealth, mBusiness;
+    pager_adapter pagerAdapter;
+    ViewPager viewPager;
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,65 +51,47 @@ public class MainActivity extends AppCompatActivity implements NewsItemClicked {
         setContentView(R.layout.activity_main);
 
         splash_screen.flag = true;
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
-        recyclerView = findViewById(R.id.recylerView);
-        fetch_data();
+        init();
+        setSupportActionBar(mToolbar);
 
-        mAdapter = new NewsListAdapter(this);
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
+        pagerAdapter = new pager_adapter(getSupportFragmentManager(), 7);
+        viewPager.setAdapter(pagerAdapter);
 
-
-    private void fetch_data(){
-        String url = "https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=f25bd7cf2bf341fa8db0f6f426364335";
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray newsJsonArray = response.getJSONArray("articles");
-                            ArrayList<News> newsArrayList = new ArrayList<News>();
-                            for(int i=0; i<newsJsonArray.length(); i++){
-                                JSONObject newsJsonObject = newsJsonArray.getJSONObject(i);
-                                News news = new News(
-                                        newsJsonObject.getString("title"),
-                                        newsJsonObject.getString("author"),
-                                        newsJsonObject.getString("url"),
-                                        newsJsonObject.getString("urlToImage")
-                                );
-                                newsArrayList.add(news);
-                            }
-                            mAdapter.updatedNews(newsArrayList);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }){
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("User-Agent", "Mozilla/5.0");
-                return headers;
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+                if(tab.getPosition() >= 0 && tab.getPosition() < 7){
+                    pagerAdapter.notifyDataSetChanged();
+                }
             }
-        };
-        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
-    @Override
-    public void onItemClicked(News item) {
-        String url = item.url;
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        builder.setToolbarColor(ContextCompat.getColor(this, R.color.design_default_color_primary));
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(this, Uri.parse(url));
+    void init(){
+        mHome = findViewById(R.id.home);
+        mScience = findViewById(R.id.science);
+        mSport = findViewById(R.id.sport);
+        mHealth = findViewById(R.id.health);
+        mEntertainment = findViewById(R.id.entertainment);
+        mTechnology = findViewById(R.id.technology);
+        mBusiness = findViewById(R.id.business);
+        viewPager = findViewById(R.id.fragmentcontainer);
+        tabLayout = findViewById(R.id.include);
+        mToolbar = findViewById(R.id.toolbar);
     }
-
 
     boolean doubleBackToExitPressedOnce = false;
     @Override
