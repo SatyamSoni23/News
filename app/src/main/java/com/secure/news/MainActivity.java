@@ -1,10 +1,16 @@
 package com.secure.news;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabColorSchemeParams;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Adapter;
 import android.widget.Toast;
@@ -33,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NewsItemClicked {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //------------------
+        splash_screen.flag = true;
         //LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
         recyclerView = findViewById(R.id.recylerView);
         fetch_data();
@@ -86,6 +92,31 @@ public class MainActivity extends AppCompatActivity implements NewsItemClicked {
 
     @Override
     public void onItemClicked(News item) {
+        String url = item.url;
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.setToolbarColor(ContextCompat.getColor(this, R.color.design_default_color_primary));
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(this, Uri.parse(url));
+    }
 
+
+    boolean doubleBackToExitPressedOnce = false;
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            MainActivity.this.finish();
+            moveTaskToBack(true);
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }
