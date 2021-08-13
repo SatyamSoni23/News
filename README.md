@@ -25,8 +25,12 @@ https://newsapi.org/
 ## Screenshots
 <table>
 <tr>
-    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc1.JPG" width=340 height=500 padding = "20"/></td>
-    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc2.JPG" width=340 height=500 padding = "20"/></td>
-    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc3.JPG" width=340 height=500 padding = "20"/></td>
+    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc1.JPG" width=340 height=480 padding = "20"/></td>
+    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc2.JPG" width=340 height=480 padding = "20"/></td>
+    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc3.JPG" width=340 height=480 padding = "20"/></td>
   </tr>
+<tr>
+    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc4.JPG" width=340 height=480 padding = "20"/></td>
+    <td><img src="https://github.com/SatyamSoni23/News/blob/master/Screenshots/cc5.JPG" width=340 height=480 padding = "20"/></td>
+    </tr>
 </table>
